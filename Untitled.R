@@ -1,0 +1,1 @@
+#Factor analysis instead of four seperate demographic variables. 

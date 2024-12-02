@@ -179,6 +179,17 @@ summary(Data$perc_fullydew_1952)
 summary(Data$perc_fullydew_1977)
 summary(Data$perc_fullydew_1994)
 
+#are these differences significant? Yes
+t.test(Data$perc_fullydew_1994, Data$perc_fullydew_1977)
+t.test(Data$perc_fullydew_1994, Data$perc_fullydew_1952)
+t.test(Data$perc_fullydew_1994, Data$perc_fullydew_1900)
+
+#How many wells total is this difference
+Data_full <- readRDS("Data/new_BG_results_05072024.rds")
+sum(na.omit(Data_full$TCDdry_1994))
+sum(na.omit(Data_full$TCDdry_1977))
+sum(na.omit(Data_full$TCDdry_1952))
+sum(na.omit(Data_full$TCDdry_1900))
 
 #How many BGs have more than 50% wells dry?
 sum(na.omit(Data$perc_fullydew_1994 >0.5))
@@ -235,9 +246,9 @@ summary(Data$pct.whitealone)
 Q1white <- Data %>% filter(pct.whitealone<=.2029)
 Q4white <- Data %>% filter(pct.whitealone>.5729)
 
-t.test(Q1white$change.fullydew.1994.1952, Q4white$change.fullydew.1994.1977) 
+t.test(Q1white$change.fullydew.1994.1977, Q4white$change.fullydew.1994.1977) 
 t.test(Q1white$change.fullydew.1994.1952, Q4white$change.fullydew.1994.1952) 
-t.test(Q1white$change.fullydew.1994.1952, Q4white$change.fullydew.1994.1900) 
+t.test(Q1white$change.fullydew.1994.1900, Q4white$change.fullydew.1994.1900) 
 
 Data$Qwhite <- "Q4"
 Data$Qwhite <- ifelse(Data$pct.whitealone<=.5729, "Q3", Data$Qwhite)
@@ -258,9 +269,9 @@ summary(Data$Median.hh.income)
 Q1MHI <- Data %>% filter(Median.hh.income<=58256)
 Q4MHI <- Data %>% filter(Median.hh.income>106544)
 
-t.test(Q1MHI$change.fullydew.1994.1952, Q4MHI$change.fullydew.1994.1977) 
+t.test(Q1MHI$change.fullydew.1994.1977, Q4MHI$change.fullydew.1994.1977) 
 t.test(Q1MHI$change.fullydew.1994.1952, Q4MHI$change.fullydew.1994.1952) 
-t.test(Q1MHI$change.fullydew.1994.1952, Q4MHI$change.fullydew.1994.1900) 
+t.test(Q1MHI$change.fullydew.1994.1900, Q4MHI$change.fullydew.1994.1900) 
 
 Data$QMHI <- "Q4"
 Data$QMHI <- ifelse(Data$Median.hh.income<=106544, "Q3", Data$QMHI)
@@ -280,9 +291,9 @@ summary(Data$pct.owner)
 Q1own <- Data %>% filter(pct.owner<=0.4822)
 Q4own <- Data %>% filter(pct.owner>0.8074)
 
-t.test(Q1own$change.fullydew.1994.1952, Q4own$change.fullydew.1994.1977) 
+t.test(Q1own$change.fullydew.1994.1977, Q4own$change.fullydew.1994.1977) 
 t.test(Q1own$change.fullydew.1994.1952, Q4own$change.fullydew.1994.1952) 
-t.test(Q1own$change.fullydew.1994.1952, Q4own$change.fullydew.1994.1900) 
+t.test(Q1own$change.fullydew.1994.1900, Q4own$change.fullydew.1994.1900) 
 
 Data$Qown <- "Q4"
 Data$Qown <- ifelse(Data$pct.owner<=0.8074, "Q3", Data$Qown)
@@ -297,14 +308,14 @@ Bplot_Owndata$Qown <- droplevels(Bplot_Owndata$Qown)
 Bplot_Own <- ggplot(Bplot_Owndata, aes(x=Qown, y = change.fullydew.1994.1952, group=Qown)) +
   geom_boxplot() + labs(x= "Percent of households that are owner-occupied", y = "Change in percent of dewatered wells")
 
-#high school educaiton
+#high school education
 summary(Data$pct_hs_above)
 Q1ed <- Data %>% filter(pct_hs_above<=0.6942)
 Q4ed <- Data %>% filter(pct_hs_above>0.9203)
 
-t.test(Q1ed$change.fullydew.1994.1952, Q4ed$change.fullydew.1994.1977) 
+t.test(Q1ed$change.fullydew.1994.1977, Q4ed$change.fullydew.1994.1977) 
 t.test(Q1ed$change.fullydew.1994.1952, Q4ed$change.fullydew.1994.1952) 
-t.test(Q1ed$change.fullydew.1994.1952, Q4ed$change.fullydew.1994.1900) 
+t.test(Q1ed$change.fullydew.1994.1900, Q4ed$change.fullydew.1994.1900) 
 
 Data$Qed <- "Q4"
 Data$Qed <- ifelse(Data$pct_hs_above<=0.9203, "Q3", Data$Qed)
@@ -319,14 +330,55 @@ Bplot_Eddata$Qed <- droplevels(Bplot_Eddata$Qed)
 Bplot_Ed <- ggplot(Bplot_Eddata, aes(x=Qed, y = change.fullydew.1994.1952, group=Qed)) +
   geom_boxplot() + labs(x= "Percent of population ≥ 25 years with HS diploma", y = "Change in percent of dewatered wells")
 
+# combine figures
+
+library(ggpubr)
+Combind_fig <- ggarrange()
+
 #Final paragraph
+
 #Q1s or Q4s across all four variables
 Q1all4 <- Data %>% filter(Qwhite == "Q1" & QMHI == "Q1" & Qown == "Q1" & Qed == "Q1")
 Q4all4 <- Data %>% filter(Qwhite == "Q4" & QMHI == "Q4" & Qown == "Q4" & Qed == "Q4")
 
-t.test(Q1all4$change.fullydew.1994.1952, Q4all4$change.fullydew.1994.1977)
+t.test(Q1all4$change.fullydew.1994.1977, Q4all4$change.fullydew.1994.1977)
 t.test(Q1all4$change.fullydew.1994.1952, Q4all4$change.fullydew.1994.1952)
-t.test(Q1all4$change.fullydew.1994.1952, Q4all4$change.fullydew.1994.1900)
+t.test(Q1all4$change.fullydew.1994.1900, Q4all4$change.fullydew.1994.1900)
+
+mean(na.omit(Q1all4$perc_fullydew_1994))
+mean(na.omit(Q4all4$perc_fullydew_1994))
+
+mean(na.omit(Q1all4$perc_fullydew_1977))
+mean(na.omit(Q4all4$perc_fullydew_1977))
+
+mean(na.omit(Q1all4$perc_fullydew_1952))
+mean(na.omit(Q4all4$perc_fullydew_1952))
+
+
+mean(na.omit(Q1all4$perc_fullydew_1900))
+mean(na.omit(Q4all4$perc_fullydew_1900))
+
+#Q1s or Q4s across just MHI and POC
+Q1all2 <- Data %>% filter(Qwhite == "Q1" & QMHI == "Q1")
+Q4all2 <- Data %>% filter(Qwhite == "Q4" & QMHI == "Q4")
+
+t.test(Q1all2$change.fullydew.1994.1977, Q4all2$change.fullydew.1994.1977)
+t.test(Q1all2$change.fullydew.1994.1952, Q4all2$change.fullydew.1994.1952)
+t.test(Q1all2$change.fullydew.1994.1900, Q4all2$change.fullydew.1994.1900)
+
+mean(na.omit(Q1all2$perc_fullydew_1994))
+mean(na.omit(Q4all2$perc_fullydew_1994))
+
+mean(na.omit(Q1all2$perc_fullydew_1977))
+mean(na.omit(Q4all2$perc_fullydew_1977))
+
+mean(na.omit(Q1all2$perc_fullydew_1952))
+mean(na.omit(Q4all2$perc_fullydew_1952))
+
+
+mean(na.omit(Q1all2$perc_fullydew_1900))
+mean(na.omit(Q4all2$perc_fullydew_1900))
+
 
 # Further breaking down race/ethncity composition of block groups
 
@@ -335,42 +387,66 @@ summary(Data$pct.hispanicorlatino)
 Q1LAT <- Data %>% filter(pct.hispanicorlatino<=0.2419)
 Q4LAT <- Data %>% filter(pct_hs_above>0.6328)
 
-t.test(Q1LAT$change.fullydew.1994.1952, Q4LAT$change.fullydew.1994.1977) 
+t.test(Q1LAT$change.fullydew.1994.1977, Q4LAT$change.fullydew.1994.1977) 
 t.test(Q1LAT$change.fullydew.1994.1952, Q4LAT$change.fullydew.1994.1952) 
-t.test(Q1LAT$change.fullydew.1994.1952, Q4LAT$change.fullydew.1994.1900) 
+t.test(Q1LAT$change.fullydew.1994.1900, Q4LAT$change.fullydew.1994.1900) 
 
 #black
 summary(Data$pct.blackalone)
 Q1BLACK <- Data %>% filter(pct.blackalone<=0)
 Q4BLACK <- Data %>% filter(pct.blackalone>0.0422)
 
-t.test(Q1BLACK$change.fullydew.1994.1952, Q4BLACK$change.fullydew.1994.1977) 
+t.test(Q1BLACK$change.fullydew.1994.1977, Q4BLACK$change.fullydew.1994.1977) 
 t.test(Q1BLACK$change.fullydew.1994.1952, Q4BLACK$change.fullydew.1994.1952) 
-t.test(Q1BLACK$change.fullydew.1994.1952, Q4BLACK$change.fullydew.1994.1900) 
+t.test(Q1BLACK$change.fullydew.1994.1900, Q4BLACK$change.fullydew.1994.1900) 
 
 #asian
 summary(Data$pct.asianalone)
 Q1ASIAN <- Data %>% filter(pct.asianalone<=0)
 Q4ASIAN <- Data %>% filter(pct.asianalone>0.10648)
 
-t.test(Q1ASIAN$change.fullydew.1994.1952, Q4ASIAN$change.fullydew.1994.1977) 
+t.test(Q1ASIAN$change.fullydew.1994.1977, Q4ASIAN$change.fullydew.1994.1977) 
 t.test(Q1ASIAN$change.fullydew.1994.1952, Q4ASIAN$change.fullydew.1994.1952) 
-t.test(Q1ASIAN$change.fullydew.1994.1952, Q4ASIAN$change.fullydew.1994.1900) 
+t.test(Q1ASIAN$change.fullydew.1994.1900, Q4ASIAN$change.fullydew.1994.1900) 
 
 #PI
 summary(Data$pct.PIalone)
 Q1PI <- Data %>% filter(pct.PIalone<=0)
 Q4PI <- Data %>% filter(pct.PIalone>0)
 
-t.test(Q1PI$change.fullydew.1994.1952, Q4PI$change.fullydew.1994.1977) 
+t.test(Q1PI$change.fullydew.1994.1977, Q4PI$change.fullydew.1994.1977) 
 t.test(Q1PI$change.fullydew.1994.1952, Q4PI$change.fullydew.1994.1952) 
-t.test(Q1PI$change.fullydew.1994.1952, Q4PI$change.fullydew.1994.1900) 
+t.test(Q1PI$change.fullydew.1994.1900, Q4PI$change.fullydew.1994.1900) 
 
 #native
 summary(Data$pct.nativealone)
 Q1NATIVE <- Data %>% filter(pct.nativealone<=0)
 Q4NATIVE <- Data %>% filter(pct.nativealone>0)
 
-t.test(Q1NATIVE$change.fullydew.1994.1952, Q4NATIVE$change.fullydew.1994.1977) 
+t.test(Q1NATIVE$change.fullydew.1994.1977, Q4NATIVE$change.fullydew.1994.1977) 
 t.test(Q1NATIVE$change.fullydew.1994.1952, Q4NATIVE$change.fullydew.1994.1952) 
-t.test(Q1NATIVE$change.fullydew.1994.1952, Q4NATIVE$change.fullydew.1994.1900) 
+t.test(Q1NATIVE$change.fullydew.1994.1900, Q4NATIVE$change.fullydew.1994.1900) 
+
+#Correlations between change and MHI and POC
+Data$Median.hh.income_10 <- Data$Median.hh.income/10000
+
+MHI_45 <- lm(Data$change.fullydew.1994.1977 ~ Median.hh.income_10 , data = Data)
+summary(MHI_45)
+
+MHI_70 <- lm(Data$change.fullydew.1994.1952 ~ Median.hh.income_10 , data = Data)
+summary(MHI_70)
+
+MHI_ALL <- lm(Data$change.fullydew.1994.1900 ~ Median.hh.income_10 , data = Data)
+summary(MHI_ALL)
+
+POC_45 <- lm(Data$change.fullydew.1994.1977 ~ Data$pct.whitealone , data = Data)
+summary(POC_45)
+
+POC_70 <- lm(Data$change.fullydew.1994.1952 ~ Data$pct.whitealone , data = Data)
+summary(POC_70)
+
+POC_ALL <- lm(Data$change.fullydew.1994.1900 ~ Data$pct.whitealone , data = Data)
+summary(POC_ALL)
+
+library(stargazer)
+stargazer(MHI, POC)
